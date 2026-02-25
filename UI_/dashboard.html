@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WhereWasMyTime - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased selection:bg-primary/30">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden pb-20">
+<!-- Header -->
+<header class="flex items-center justify-between px-6 pt-12 pb-4">
+<div class="flex flex-col">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Welcome back,</p>
+<h1 class="text-2xl font-bold tracking-tight">Dashboard</h1>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors hover:bg-primary/20 hover:text-primary">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<!-- Main Stats Card -->
+<div class="px-4 mb-8">
+<div class="relative overflow-hidden rounded-xl bg-slate-900 dark:bg-[#1a3325] p-6 shadow-lg">
+<div class="absolute right-0 top-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-primary/20 blur-2xl"></div>
+<div class="relative z-10 flex flex-col items-center justify-center gap-1 text-center">
+<span class="text-sm font-medium text-slate-400 dark:text-slate-400">Total Tracked Today</span>
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-bold text-white tracking-tight">4h 23m</span>
+</div>
+<div class="mt-2 flex items-center gap-1 rounded-full bg-slate-800 dark:bg-[#23482f] px-3 py-1 text-xs font-medium text-primary">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+15% vs yesterday</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Start Timer Button -->
+<div class="px-4 mb-10 flex justify-center">
+<button class="group relative flex h-20 w-full items-center justify-between overflow-hidden rounded-xl bg-primary px-6 transition-all active:scale-[0.98]">
+<div class="flex items-center gap-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-black/10 text-black">
+<span class="material-symbols-outlined filled">play_arrow</span>
+</div>
+<div class="flex flex-col items-start">
+<span class="text-lg font-bold text-slate-900">Start Focus Session</span>
+<span class="text-xs font-medium text-slate-800/70">Ready to begin tracking?</span>
+</div>
+</div>
+<div class="rounded-full bg-black/10 p-2 opacity-0 transition-opacity group-hover:opacity-100">
+<span class="material-symbols-outlined text-black">arrow_forward</span>
+</div>
+</button>
+</div>
+<!-- Quick Categories -->
+<div class="px-6">
+<div class="mb-4 flex items-center justify-between">
+<h2 class="text-lg font-bold">Quick Start</h2>
+<button class="text-sm font-medium text-primary">View All</button>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Card 1: Study -->
+<button class="flex flex-col gap-3 rounded-xl bg-white dark:bg-[#1a3325] p-4 text-left shadow-sm transition-transform active:scale-95 border border-slate-100 dark:border-transparent">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Study</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Physics 101</p>
+</div>
+</button>
+<!-- Card 2: Gym -->
+<button class="flex flex-col gap-3 rounded-xl bg-white dark:bg-[#1a3325] p-4 text-left shadow-sm transition-transform active:scale-95 border border-slate-100 dark:border-transparent">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+<span class="material-symbols-outlined">fitness_center</span>
+</div>
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Gym</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Workout Plan A</p>
+</div>
+</button>
+<!-- Card 3: Coding -->
+<button class="flex flex-col gap-3 rounded-xl bg-white dark:bg-[#1a3325] p-4 text-left shadow-sm transition-transform active:scale-95 border border-slate-100 dark:border-transparent">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+<span class="material-symbols-outlined">code</span>
+</div>
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Coding</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Project Beta</p>
+</div>
+</button>
+<!-- Card 4: Social Media -->
+<button class="flex flex-col gap-3 rounded-xl bg-white dark:bg-[#1a3325] p-4 text-left shadow-sm transition-transform active:scale-95 border border-slate-100 dark:border-transparent">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
+<span class="material-symbols-outlined">share</span>
+</div>
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Social</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Instagram</p>
+</div>
+</button>
+</div>
+</div>
+<!-- Recent Activity List -->
+<div class="px-6 mt-8">
+<h2 class="mb-4 text-lg font-bold">Recent History</h2>
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between rounded-lg bg-white dark:bg-[#1a3325] p-3 border border-slate-100 dark:border-transparent">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-cover bg-center" data-alt="Laptop keyboard close up" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDXJYF_xhjdiXiJwLd2u65mYRNL3zyWcgA0gB-XPXvWu2cze6wC062cSQFevA4n63QmvVF5psB7hR9puXCEP_kSmKzzF1H544R870uoLBVJCUVpnk06mla591auNCgVDazYhx0u2pIDeeLtZe7rYvf-rjGXSlfZq43tz05LOPhW7hQEw-o3_lVmr-Ue16Wl00CkJ79nBumexSNFH2hfSBajts7SmUcyUrOSEDB9k4MboZWHYExTAmW7VUmAryPVZe7LT34D1QTCBQ4");'></div>
+<div>
+<p class="font-medium text-sm text-slate-900 dark:text-slate-100">Coding Session</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Today, 10:00 AM</p>
+</div>
+</div>
+<span class="text-sm font-bold text-slate-900 dark:text-slate-100">2h 15m</span>
+</div>
+<div class="flex items-center justify-between rounded-lg bg-white dark:bg-[#1a3325] p-3 border border-slate-100 dark:border-transparent">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-cover bg-center" data-alt="People working on laptops" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCVJVQZDYt76X4z3yUuqoMNqn9eKXubSgdbYQxScczBldSKLzy76qOzGYCXI79-jCCezaM4S_V2QzEfc5afBShn0Dm6h9af7TBhYggWsritW5_YVrU6Pbb5td6mo5bWoYNKpqHTVi5Eh2AZJ0vlEHUUO6J097OJ9Ay1I6oPYoWFTFhFhPY8QhXioZgE83lh0F65pFQeOFPyrCK8GrQGaiFcQ_sm0N4Q29ONsQt4k8mFs_o3D1o8uS7JvgnUBw0stGdlbSDh2uA_mNI");'></div>
+<div>
+<p class="font-medium text-sm text-slate-900 dark:text-slate-100">Deep Work</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Yesterday, 2:30 PM</p>
+</div>
+</div>
+<span class="text-sm font-bold text-slate-900 dark:text-slate-100">1h 45m</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white dark:border-[#23482f] dark:bg-[#193322] px-6 pb-6 pt-3">
+<div class="flex items-center justify-between">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined filled">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-[#92c9a4] hover:text-primary dark:hover:text-primary" href="#">
+<span class="material-symbols-outlined">pie_chart</span>
+<span class="text-[10px] font-medium">Reports</span>
+</a>
+<div class="relative -top-6">
+<button class="flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg shadow-primary/30 text-slate-900 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-[#92c9a4] hover:text-primary dark:hover:text-primary" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="text-[10px] font-medium">Categories</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-[#92c9a4] hover:text-primary dark:hover:text-primary" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-medium">Settings</span>
+</a>
+</div>
+</nav>
+</body></html>

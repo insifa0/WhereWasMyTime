@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WhereWasMyTime - Weekly Statistics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                        "surface-dark": "#162e1e",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(19, 236, 91, 0.2);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(19, 236, 91, 0.4);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased selection:bg-primary/30 selection:text-primary">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-20">
+<!-- Top Bar -->
+<div class="sticky top-0 z-20 flex items-center justify-between bg-background-light/90 dark:bg-background-dark/90 px-4 py-4 backdrop-blur-md border-b border-slate-200 dark:border-white/5">
+<h1 class="text-xl font-bold tracking-tight">Statistics</h1>
+<div class="flex gap-2">
+<button class="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                    PDF
+                </button>
+<button class="flex items-center gap-1 rounded-full bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-[16px]">table_chart</span>
+                    CSV
+                </button>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 px-4 py-6 space-y-8">
+<!-- Date Navigator -->
+<div class="flex items-center justify-between px-2">
+<button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="text-center">
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">This Week</p>
+<p class="text-lg font-bold">Oct 23 - Oct 29</p>
+</div>
+<button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<!-- Total Time Summary Card -->
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-white/5">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Productivity</p>
+<div class="flex items-baseline gap-2">
+<h2 class="text-4xl font-bold text-slate-900 dark:text-white">42<span class="text-2xl text-slate-500 font-medium">h</span> 15<span class="text-2xl text-slate-500 font-medium">m</span></h2>
+<span class="inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-medium bg-primary/20 text-green-700 dark:text-primary">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                        +12%
+                    </span>
+</div>
+<p class="text-xs text-slate-400 mt-2">vs. last week (37h 45m)</p>
+</div>
+<!-- Activity Breakdown (Pie Chart Representation) -->
+<div>
+<h3 class="text-lg font-bold mb-4 px-1">Activity Breakdown</h3>
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-white/5 flex flex-col md:flex-row gap-8 items-center justify-between">
+<!-- CSS Pie Chart -->
+<div class="relative w-48 h-48 rounded-full flex-shrink-0" style="background: conic-gradient(#13ec5b 0% 45%, #3b82f6 45% 70%, #f59e0b 70% 85%, #ec4899 85% 100%);">
+<div class="absolute inset-0 m-auto w-32 h-32 bg-surface-light dark:bg-surface-dark rounded-full flex flex-col items-center justify-center">
+<span class="text-xs text-slate-400 font-medium">Top Focus</span>
+<span class="text-xl font-bold text-primary">Work</span>
+</div>
+</div>
+<!-- Legend -->
+<div class="w-full space-y-3">
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-primary shadow-[0_0_8px_rgba(19,236,91,0.4)]"></div>
+<span class="text-sm font-medium">Work</span>
+</div>
+<div class="text-right">
+<span class="block text-sm font-bold">19h 01m</span>
+<span class="block text-xs text-slate-500">45%</span>
+</div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-white/5 rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 45%"></div>
+</div>
+<div class="flex items-center justify-between pt-1 group">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-blue-500"></div>
+<span class="text-sm font-medium">Study</span>
+</div>
+<div class="text-right">
+<span class="block text-sm font-bold">10h 30m</span>
+<span class="block text-xs text-slate-500">25%</span>
+</div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-white/5 rounded-full h-1.5 overflow-hidden">
+<div class="bg-blue-500 h-full rounded-full" style="width: 25%"></div>
+</div>
+<div class="flex items-center justify-between pt-1 group">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-amber-500"></div>
+<span class="text-sm font-medium">Exercise</span>
+</div>
+<div class="text-right">
+<span class="block text-sm font-bold">6h 15m</span>
+<span class="block text-xs text-slate-500">15%</span>
+</div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-white/5 rounded-full h-1.5 overflow-hidden">
+<div class="bg-amber-500 h-full rounded-full" style="width: 15%"></div>
+</div>
+<div class="flex items-center justify-between pt-1 group">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-pink-500"></div>
+<span class="text-sm font-medium">Social</span>
+</div>
+<div class="text-right">
+<span class="block text-sm font-bold">6h 29m</span>
+<span class="block text-xs text-slate-500">15%</span>
+</div>
+</div>
+<div class="w-full bg-slate-100 dark:bg-white/5 rounded-full h-1.5 overflow-hidden">
+<div class="bg-pink-500 h-full rounded-full" style="width: 15%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Daily Trends (Bar Chart) -->
+<div>
+<h3 class="text-lg font-bold mb-4 px-1">Daily Trends</h3>
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-white/5">
+<div class="flex items-end justify-between h-48 gap-2 md:gap-4">
+<!-- Mon -->
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="relative w-full bg-slate-100 dark:bg-white/5 rounded-t-lg rounded-b-sm h-full flex items-end overflow-hidden">
+<div class="w-full bg-primary/30 group-hover:bg-primary/50 transition-all duration-300 rounded-t-lg" style="height: 45%;"></div>
+</div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Mon</span>
+</div>
+<!-- Tue -->
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="relative w-full bg-slate-100 dark:bg-white/5 rounded-t-lg rounded-b-sm h-full flex items-end overflow-hidden">
+<div class="w-full bg-primary/40 group-hover:bg-primary/60 transition-all duration-300 rounded-t-lg" style="height: 60%;"></div>
+</div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Tue</span>
+</div>
+<!-- Wed -->
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="relative w-full bg-slate-100 dark:bg-white/5 rounded-t-lg rounded-b-sm h-full flex items-end overflow-hidden">
+<div class="w-full bg-primary group-hover:bg-primary/90 transition-all duration-300 rounded-t-lg shadow-[0_0_12px_rgba(19,236,91,0.3)]" style="height: 85%;"></div>
+</div>
+<span class="text-xs font-bold text-primary">Wed</span>
+</div>
+<!-- Thu -->
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="relative w-full bg-slate-100 dark:bg-white/5 rounded-t-lg rounded-b-sm h-full flex items-end overflow-hidden">
+<div class="w-full bg-primary/60 group-hover:bg-primary/80 transition-all duration-300 rounded-t-lg" style="height: 70%;"></div>
+</div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Thu</span>
+</div>
+<!-- Fri -->
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="relative w-full bg-slate-100 dark:bg-white/5 rounded-t-lg rounded-b-sm h-full flex items-end overflow-hidden">
+<div class="w-full bg-primary/50 group-hover:bg-primary/70 transition-all duration-300 rounded-t-lg" style="height: 55%;"></div>
+</div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Fri</span>
+</div>
+<!-- Sat -->
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="relative w-full bg-slate-100 dark:bg-white/5 rounded-t-lg rounded-b-sm h-full flex items-end overflow-hidden">
+<div class="w-full bg-primary/20 group-hover:bg-primary/40 transition-all duration-300 rounded-t-lg" style="height: 30%;"></div>
+</div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Sat</span>
+</div>
+<!-- Sun -->
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="relative w-full bg-slate-100 dark:bg-white/5 rounded-t-lg rounded-b-sm h-full flex items-end overflow-hidden">
+<div class="w-full bg-primary/10 group-hover:bg-primary/30 transition-all duration-300 rounded-t-lg" style="height: 20%;"></div>
+</div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Sun</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Focus Categories List (Drilldown) -->
+<div>
+<div class="flex justify-between items-center mb-4 px-1">
+<h3 class="text-lg font-bold">Top Projects</h3>
+<a class="text-sm text-primary font-medium hover:underline" href="#">View All</a>
+</div>
+<div class="space-y-3">
+<!-- Item 1 -->
+<div class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-slate-100 dark:border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">code</span>
+</div>
+<div>
+<p class="font-semibold text-sm">Website Redesign</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Client: Acme Corp</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm">12h 30m</p>
+<p class="text-xs text-green-500">+2h</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-slate-100 dark:border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<div>
+<p class="font-semibold text-sm">Python Course</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Self-improvement</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm">8h 15m</p>
+<p class="text-xs text-slate-500">Avg</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Nav Bar -->
+<div class="fixed bottom-0 left-0 right-0 border-t border-slate-200 dark:border-white/10 bg-surface-light/95 dark:bg-background-dark/95 backdrop-blur-xl px-4 pb-6 pt-2 z-50">
+<div class="flex justify-between items-center max-w-md mx-auto">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-colors group" href="#">
+<div class="flex h-8 items-center justify-center group-hover:-translate-y-1 transition-transform duration-200">
+<span class="material-symbols-outlined text-[24px]">timer</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Timer</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary relative" href="#">
+<!-- Active Indicator -->
+<div class="absolute -top-2 w-12 h-1 bg-primary rounded-b-full shadow-[0_0_10px_rgba(19,236,91,0.6)]"></div>
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[24px] fill-current">pie_chart</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Stats</p>
+</a>
+<!-- Floating Action Button for Adding Time manually - Center Piece optional but cool for time tracking -->
+<div class="-mt-8 mx-2">
+<button class="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-background-dark shadow-[0_0_15px_rgba(19,236,91,0.5)] hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+</div>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-colors group" href="#">
+<div class="flex h-8 items-center justify-center group-hover:-translate-y-1 transition-transform duration-200">
+<span class="material-symbols-outlined text-[24px]">folder</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Projects</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-colors group" href="#">
+<div class="flex h-8 items-center justify-center group-hover:-translate-y-1 transition-transform duration-200">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Settings</p>
+</a>
+</div>
+</div>
+</div>
+</body></html>
