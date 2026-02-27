@@ -4,11 +4,13 @@ import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.wherewasmytime.WhereWasMyTimeApp
 import com.example.wherewasmytime.service.TimerService
 import com.example.wherewasmytime.service.TimerState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class ActiveTimerViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -48,5 +50,12 @@ class ActiveTimerViewModel(application: Application) : AndroidViewModel(applicat
             this.action = action
         }
         context.startService(intent)
+    }
+
+    fun updatePhotoPath(sessionId: Long, photoPath: String) {
+        val app = getApplication<WhereWasMyTimeApp>()
+        viewModelScope.launch {
+            app.repository.updateSessionPhoto(sessionId, photoPath)
+        }
     }
 }

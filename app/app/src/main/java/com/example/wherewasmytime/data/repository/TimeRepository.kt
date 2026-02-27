@@ -98,6 +98,9 @@ class TimeRepository(
     suspend fun updateSession(session: SessionEntity) =
         sessionDao.updateSession(session)
 
+    suspend fun updateSessionPhoto(sessionId: Long, photoPath: String) =
+        sessionDao.updateSessionPhoto(sessionId, photoPath)
+
     suspend fun deleteSession(id: Long) =
         sessionDao.deleteSession(id)
 

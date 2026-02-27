@@ -1,5 +1,7 @@
 package com.example.wherewasmytime.ui.screens.timer
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -19,11 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.wherewasmytime.ui.theme.Primary
+import com.example.wherewasmytime.utils.ImageUtils
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,6 +41,29 @@ fun ActiveTimerScreen(
     viewModel: ActiveTimerViewModel = viewModel()
 ) {
     val state by viewModel.timerState.collectAsState()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    var tempPhotoUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    var capturedPhotoPath by remember { mutableStateOf<String?>(null) }
+    var isCapturing by remember { mutableStateOf(false) }
+
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        isCapturing = false
+        if (success && tempPhotoUri != null) {
+            coroutineScope.launch {
+                val savedPath = ImageUtils.compressAndSaveImage(context, tempPhotoUri!!)
+                if (savedPath != null) {
+                    capturedPhotoPath = savedPath
+                    // state.sessionId -1 ise oturum henüz başlatılmamış demektir, ama
+                    // normalde LaunchedEffect ile başlatılır.
+                    if (state.sessionId > 0) {
+                        viewModel.updatePhotoPath(state.sessionId, savedPath)
+                    }
+                }
+            }
+        }
+    }
 
     // Kategori başladıysa ve aynı oturum değilse başlat
     LaunchedEffect(categoryId) {
@@ -129,21 +159,46 @@ fun ActiveTimerScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             // --- Fotoğraf Ekle Butonu ---
+            val buttonColor = if (capturedPhotoPath != null) 
+                ButtonDefaults.outlinedButtonColors(contentColor = Primary, containerColor = Primary.copy(alpha = 0.1f))
+            else
+                ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)
+
             OutlinedButton(
-                onClick = { },
+                onClick = {
+                    if (!isCapturing && state.sessionId > 0) {
+                        isCapturing = true
+                        val tempFile = ImageUtils.createTempImageFile(context)
+                        val uri = FileProvider.getUriForFile(
+                            context,
+                            "${context.packageName}.fileprovider",
+                            tempFile
+                        )
+                        tempPhotoUri = uri
+                        cameraLauncher.launch(uri)
+                    }
+                },
                 shape = CircleShape,
                 modifier = Modifier.height(48.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                colors = buttonColor
             ) {
-                Icon(
-                    imageVector = Icons.Filled.AddAPhoto,
-                    contentDescription = "Fotoğraf Ekle",
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Fotoğraf Ekle", style = MaterialTheme.typography.bodyMedium)
+                if (capturedPhotoPath != null) {
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Fotoğraf Eklendi",
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Fotoğraf Eklendi", style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.AddAPhoto,
+                        contentDescription = "Fotoğraf Ekle",
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Fotoğraf Ekle", style = MaterialTheme.typography.bodyMedium)
+                }
             }
 
             Spacer(modifier = Modifier.height(48.dp))

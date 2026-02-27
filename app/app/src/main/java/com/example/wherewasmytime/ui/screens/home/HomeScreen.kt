@@ -23,6 +23,8 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.*
+import coil.compose.AsyncImage
+import java.io.File
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -702,6 +704,22 @@ private fun SessionEditSheet(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
+
+            if (!session.photoPath.isNullOrEmpty()) {
+                val photoFile = File(session.photoPath)
+                if (photoFile.exists()) {
+                    AsyncImage(
+                        model = photoFile,
+                        contentDescription = "Oturum Fotoğrafı",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                    )
+                }
+            }
 
             Button(
                 onClick = {

@@ -63,4 +63,8 @@ interface SessionDao {
         WHERE id = :sessionId
     """)
     suspend fun finishSession(sessionId: Long, endTime: Long, durationMinutes: Int)
+
+    /** Oturuma fotoğraf yolu ekler. */
+    @Query("UPDATE sessions SET photoPath = :photoPath WHERE id = :sessionId")
+    suspend fun updateSessionPhoto(sessionId: Long, photoPath: String)
 }
