@@ -1,5 +1,9 @@
 package com.example.wherewasmytime.ui.screens.reports
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -31,6 +35,15 @@ import com.example.wherewasmytime.ui.theme.Primary
 @Composable
 fun ReportsScreen(viewModel: ReportsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    var showMenu by remember { mutableStateOf(false) }
+
+    val createDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/csv"),
+        onResult = { uri: Uri? ->
+            uri?.let { viewModel.saveCsvToUri(context, it) }
+        }
+    )
 
     LazyColumn(
         modifier = Modifier
@@ -50,13 +63,35 @@ fun ReportsScreen(viewModel: ReportsViewModel = viewModel()) {
                     )
                 },
                 actions = {
-                    val context = LocalContext.current
-                    IconButton(onClick = { viewModel.exportToCsv(context) }) {
-                        Icon(
-                            imageVector = Icons.Default.Download,
-                            contentDescription = "CSV İndir",
-                            tint = Primary
-                        )
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Download,
+                                contentDescription = "Dışa Aktar",
+                                tint = Primary
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Uygulamada Paylaş", color = MaterialTheme.colorScheme.onSurface) },
+                                onClick = {
+                                    showMenu = false
+                                    viewModel.exportToCsv(context)
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Cihaza Kaydet", color = MaterialTheme.colorScheme.onSurface) },
+                                onClick = {
+                                    showMenu = false
+                                    val timestamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(java.util.Date())
+                                    createDocumentLauncher.launch("Zaman_Raporu_$timestamp.csv")
+                                }
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

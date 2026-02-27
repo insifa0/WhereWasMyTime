@@ -83,7 +83,7 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(bottom = paddingValues.calculateBottomPadding()),
             contentPadding = PaddingValues(bottom = 24.dp)
         ) {
         // --- Header ---
