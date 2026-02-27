@@ -219,7 +219,7 @@ class ReportsViewModel(application: Application) : AndroidViewModel(application)
                 )
 
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                    type = "text/csv"
+                    type = "*/*"
                     putExtra(Intent.EXTRA_STREAM, uri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
