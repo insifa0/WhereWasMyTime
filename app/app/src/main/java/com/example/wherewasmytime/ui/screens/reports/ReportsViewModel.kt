@@ -1,13 +1,22 @@
 package com.example.wherewasmytime.ui.screens.reports
 
 import android.app.Application
+import android.content.Context
+import android.content.Intent
+import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wherewasmytime.WhereWasMyTimeApp
 import com.example.wherewasmytime.data.local.entity.CategoryEntity
 import com.example.wherewasmytime.data.local.entity.SessionEntity
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 data class DayStats(
     val dayLabel: String,   // "Pzt", "Sal" vb.
@@ -27,7 +36,9 @@ data class ReportsUiState(
     val totalMinutes: Int = 0,
     val avgMinutesPerDay: Int = 0,
     val longestSession: Int = 0,
-    val sessionCount: Int = 0
+    val sessionCount: Int = 0,
+    val rawSessions: List<SessionEntity> = emptyList(),
+    val currentCategories: Map<Long, String> = emptyMap()
 )
 
 enum class ReportFilter { WEEK, MONTH }
@@ -121,7 +132,9 @@ class ReportsViewModel(application: Application) : AndroidViewModel(application)
             totalMinutes = totalMinutes,
             avgMinutesPerDay = totalMinutes / dayCount,
             longestSession = sessions.maxOfOrNull { it.durationMinutes } ?: 0,
-            sessionCount = sessions.size
+            sessionCount = sessions.size,
+            rawSessions = sessions,
+            currentCategories = catMap.mapValues { it.value.name }
         )
     }
 
@@ -164,6 +177,60 @@ class ReportsViewModel(application: Application) : AndroidViewModel(application)
                         .sumOf { it.durationMinutes }
                     DayStats(dayLabel = "${week + 1}. Hafta", minutes = mins)
                 }
+            }
+        }
+    }
+
+    fun exportToCsv(context: Context) {
+        val state = uiState.value
+        if (state.rawSessions.isEmpty()) return
+
+        viewModelScope.launch {
+            try {
+                val csvContent = StringBuilder()
+                csvContent.append("Oturum ID,Kategori,Tarih,Saat,Sure (dk)\n")
+
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+                state.rawSessions.forEach { session ->
+                    val catName = state.currentCategories[session.categoryId] ?: "Bilinmeyen"
+                    val dateStr = dateFormat.format(Date(session.startTime))
+                    val timeStr = timeFormat.format(Date(session.startTime))
+                    csvContent.append("${session.id},\"$catName\",$dateStr,$timeStr,${session.durationMinutes}\n")
+                }
+
+                val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                val filename = "Zaman_Raporu_$timestamp.csv"
+                val file = File(context.cacheDir, filename)
+
+                FileOutputStream(file).use { fos ->
+                    // UTF-8 BOM eklemek Excel gibi programların Türkçe karakterleri düzgün açmasını sağlar
+                    fos.write(0xEF)
+                    fos.write(0xBB)
+                    fos.write(0xBF)
+                    fos.write(csvContent.toString().toByteArray())
+                }
+
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.fileprovider",
+                    file
+                )
+
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/csv"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+
+                // startActivity is context dependent, needs standard Intent launching
+                val chooser = Intent.createChooser(shareIntent, "Raporu Paylaş")
+                chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(chooser)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
