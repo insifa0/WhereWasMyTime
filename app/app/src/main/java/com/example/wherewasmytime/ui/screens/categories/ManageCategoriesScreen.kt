@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.automirrored.outlined.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -35,6 +36,7 @@ fun ManageCategoriesScreen(
     viewModel: ManageCategoriesViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var categoryToDelete by remember { mutableStateOf<CategoryEntity?>(null) }
 
     // Add/Edit BottomSheet
     if (uiState.showSheet) {
@@ -45,13 +47,44 @@ fun ManageCategoriesScreen(
         )
     }
 
+    if (categoryToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { categoryToDelete = null },
+            title = { Text("Kategoriyi Sil") },
+            text = { Text("Silmek istiyor musun? Eğer bu kategoriyi silerseniz, bu kategori altındaki tüm çalışmalarınız silinir.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    categoryToDelete?.let { viewModel.hardDeleteCategory(it) }
+                    categoryToDelete = null
+                }) {
+                    Text("Kalıcı Sil", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    TextButton(onClick = { categoryToDelete = null }) {
+                        Text("İptal")
+                    }
+                    TextButton(onClick = {
+                        categoryToDelete?.let { viewModel.archiveCategory(it) }
+                        categoryToDelete = null
+                    }) {
+                        Text("Arşivle")
+                    }
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Kategoriler", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = "Geri")
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Geri")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -96,7 +129,7 @@ fun ManageCategoriesScreen(
                     CategoryManageCard(
                         category = category,
                         onEdit = { viewModel.startEditing(category) },
-                        onArchive = { viewModel.archiveCategory(category) }
+                        onArchive = { categoryToDelete = category }
                     )
                 }
             }
@@ -209,8 +242,8 @@ private fun CategoryManageCard(
                 if (!isArchived && onArchive != null) {
                     IconButton(onClick = onArchive, modifier = Modifier.size(36.dp)) {
                         Icon(
-                            Icons.Outlined.Archive,
-                            contentDescription = "Arşivle",
+                            Icons.Outlined.Delete,
+                            contentDescription = "Sil",
                             tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
                             modifier = Modifier.size(18.dp)
                         )

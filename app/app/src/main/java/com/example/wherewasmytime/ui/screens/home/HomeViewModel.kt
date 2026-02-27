@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 data class HomeUiState(
     val activeCategories: List<CategoryEntity> = emptyList(),
@@ -44,4 +45,28 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = HomeUiState()
     )
+
+    fun archiveCategory(category: CategoryEntity) {
+        viewModelScope.launch {
+            repository.archiveCategory(category.id)
+        }
+    }
+
+    fun deleteSession(session: SessionEntity) {
+        viewModelScope.launch {
+            repository.deleteSession(session.id)
+        }
+    }
+
+    fun insertSession(session: SessionEntity) {
+        viewModelScope.launch {
+            repository.insertSession(session)
+        }
+    }
+
+    fun updateSession(session: SessionEntity) {
+        viewModelScope.launch {
+            repository.updateSession(session)
+        }
+    }
 }

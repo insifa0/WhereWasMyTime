@@ -17,7 +17,6 @@ Executing tasks: [:app:assembleDebug] in project D:\Drive_D\Antigravity\WhereWas
 > Task :app:processDebugManifest UP-TO-DATE
 > Task :app:processDebugManifestForPackage UP-TO-DATE
 > Task :app:processDebugResources UP-TO-DATE
-> Task :app:kspDebugKotlin UP-TO-DATE
 > Task :app:javaPreCompileDebug UP-TO-DATE
 > Task :app:mergeDebugShaders UP-TO-DATE
 > Task :app:compileDebugShaders NO-SOURCE
@@ -35,13 +34,13 @@ Executing tasks: [:app:assembleDebug] in project D:\Drive_D\Antigravity\WhereWas
 > Task :app:writeDebugAppMetadata UP-TO-DATE
 > Task :app:writeDebugSigningConfigVersions UP-TO-DATE
 
-> Task :app:compileDebugKotlin FAILED
-e: file:///D:/Drive_D/Antigravity/WhereWasMyTime/app/app/src/main/java/com/example/wherewasmytime/navigation/AppNavigation.kt:98:53 Unresolved reference 'padding'.
+> Task :app:kspDebugKotlin FAILED
+e: file:///D:/Drive_D/Antigravity/WhereWasMyTime/app/app/src/main/java/com/example/wherewasmytime/ui/screens/home/HomeScreen.kt:734:2 Expecting '}'
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:compileDebugKotlin'.
+Execution failed for task ':app:kspDebugKotlin'.
 > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
    > Compilation error. See log for more details
 
@@ -51,7 +50,7 @@ Execution failed for task ':app:compileDebugKotlin'.
 > Get more help at https://help.gradle.org.
 
 * Exception is:
-org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileDebugKotlin'.
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:kspDebugKotlin'.
 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:130)
 	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:293)
 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:128)
@@ -240,5 +239,5 @@ Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilat
 	... 2 more
 
 
-BUİLD FAILED in 1s
-29 actionable tasks: 1 executed, 28 up-to-date
+BUİLD FAILED in 2s
+28 actionable tasks: 1 executed, 27 up-to-date

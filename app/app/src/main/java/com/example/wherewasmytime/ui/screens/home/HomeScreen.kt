@@ -1,8 +1,15 @@
 package com.example.wherewasmytime.ui.screens.home
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -10,14 +17,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -35,9 +41,11 @@ import com.example.wherewasmytime.ui.theme.Primary
 import com.example.wherewasmytime.ui.theme.SurfaceCard
 import com.example.wherewasmytime.ui.theme.SurfaceVariantDark
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onStartSession: (CategoryEntity) -> Unit = {},
@@ -46,13 +54,36 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    var sessionToEdit by remember { mutableStateOf<SessionEntity?>(null) }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(bottom = 24.dp)
-    ) {
+    if (sessionToEdit != null) {
+        SessionEditSheet(
+            session = sessionToEdit!!,
+            onDismiss = { sessionToEdit = null },
+            onSave = { newStartTimeMs, newDurationMins ->
+                viewModel.updateSession(
+                    sessionToEdit!!.copy(
+                        startTime = newStartTimeMs,
+                        durationMinutes = newDurationMins
+                    )
+                )
+                sessionToEdit = null
+            }
+        )
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentPadding = PaddingValues(bottom = 24.dp)
+        ) {
         // --- Header ---
         item {
             HomeHeader()
@@ -128,15 +159,30 @@ fun HomeScreen(
                 EmptySessionsHint(modifier = Modifier.padding(horizontal = 16.dp))
             }
         } else {
-            items(uiState.recentSessions) { session ->
+            items(uiState.recentSessions, key = { it.id }) { session ->
                 RecentSessionItem(
                     session = session,
                     categoryName = uiState.categoriesMap[session.categoryId]?.name ?: "Bilinmeyen",
+                    onClick = { sessionToEdit = session },
+                    onDelete = {
+                        viewModel.deleteSession(session)
+                        coroutineScope.launch {
+                            val result = snackbarHostState.showSnackbar(
+                                message = "Oturum silindi",
+                                actionLabel = "GERİ AL",
+                                duration = SnackbarDuration.Short
+                            )
+                            if (result == SnackbarResult.ActionPerformed) {
+                                viewModel.insertSession(session)
+                            }
+                        }
+                    },
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                 )
             }
         }
     }
+}
 }
 
 // ===================== Alt Bileşenler =====================
@@ -232,7 +278,7 @@ private fun TotalTimeCard(totalMinutes: Int, modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.TrendingUp,
+                        imageVector = Icons.AutoMirrored.Filled.TrendingUp,
                         contentDescription = null,
                         tint = Primary,
                         modifier = Modifier.size(14.dp)
@@ -332,25 +378,8 @@ private fun CategoryGrid(
     onManageClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    if (categories.isEmpty()) {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(80.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Henüz kategori yok",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        return
-    }
-
-    // 2 sütunlu ızgara — LazyVerticalGrid yerine manual column grouping kullanıyoruz
-    // çünkü LazyColumn'un içindeyiz (nested scroll sorunu olur)
-    val rows = categories.chunked(2)
+    val items = categories + null
+    val rows = items.chunked(2)
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -361,11 +390,18 @@ private fun CategoryGrid(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 rowItems.forEach { category ->
-                    CategoryCard(
-                        category = category,
-                        onClick = { onCategoryClick(category) },
-                        modifier = Modifier.weight(1f)
-                    )
+                    if (category == null) {
+                        AddCategoryCard(
+                            onClick = onManageClick,
+                            modifier = Modifier.weight(1f)
+                        )
+                    } else {
+                        CategoryCard(
+                            category = category,
+                            onClick = { onCategoryClick(category) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
                 // Tek eleman varsa boşluğu doldur
                 if (rowItems.size == 1) {
@@ -389,8 +425,9 @@ private fun CategoryCard(
     }
 
     Card(
-        onClick = onClick,
-        modifier = modifier,
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -439,9 +476,58 @@ private fun CategoryCard(
 }
 
 @Composable
+private fun AddCategoryCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box(
+                modifier = Modifier.size(48.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Yeni Ekle",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Yeni Ekle",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "Kategori",
+                style = MaterialTheme.typography.bodySmall,
+                color = androidx.compose.ui.graphics.Color.Transparent
+            )
+        }
+    }
+}
+
+@Composable
 private fun RecentSessionItem(
     session: SessionEntity,
     categoryName: String,
+    onClick: () -> Unit,
+    onDelete: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -451,12 +537,63 @@ private fun RecentSessionItem(
     else
         "${session.durationMinutes / 60}s ${session.durationMinutes % 60}dk"
 
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(0.dp)
+    var offsetX by remember { mutableStateOf(0f) }
+    val maxSwipe = with(LocalDensity.current) { 80.dp.toPx() }
+    val animatedOffsetX by animateFloatAsState(targetValue = offsetX)
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.error)
     ) {
+        // Arka plandaki sil butonu
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .width(80.dp)
+                .fillMaxHeight()
+                .clickable {
+                    offsetX = 0f
+                    onDelete()
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                Icons.Filled.Delete,
+                contentDescription = "Sil",
+                tint = MaterialTheme.colorScheme.onError
+            )
+        }
+
+        // Ön plandaki kart
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset { IntOffset(animatedOffsetX.toInt(), 0) }
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures(
+                        onHorizontalDrag = { _, dragAmount ->
+                            val newOffsetX = offsetX + dragAmount
+                            // Sadece sola çekmeye izin ver, ve maxSwipe kadar
+                            offsetX = newOffsetX.coerceIn(-maxSwipe, 0f)
+                        },
+                        onDragEnd = {
+                            // Yarıdan fazla çekildiyse açık bırak, yoksa kapat
+                            if (offsetX < -maxSwipe / 2) {
+                                offsetX = -maxSwipe
+                            } else {
+                                offsetX = 0f
+                            }
+                        },
+                        onDragCancel = { offsetX = 0f }
+                    )
+                }
+                .clickable(onClick = onClick),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(0.dp)
+        ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -504,6 +641,7 @@ private fun RecentSessionItem(
             )
         }
     }
+    }
 }
 
 @Composable
@@ -522,5 +660,76 @@ private fun EmptySessionsHint(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SessionEditSheet(
+    session: SessionEntity,
+    onDismiss: () -> Unit,
+    onSave: (Long, Int) -> Unit
+) {
+    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    var timeText by remember { mutableStateOf(timeFormat.format(Date(session.startTime))) }
+    var durationText by remember { mutableStateOf(session.durationMinutes.toString()) }
+
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                "Oturumu Düzenle",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            OutlinedTextField(
+                value = timeText,
+                onValueChange = { timeText = it },
+                label = { Text("Başlangıç Saati (SS:dd)") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = durationText,
+                onValueChange = { durationText = it },
+                label = { Text("Süre (Dakika)") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Button(
+                onClick = {
+                    try {
+                        val parsedTime = timeFormat.parse(timeText)
+                        val duration = durationText.toIntOrNull() ?: session.durationMinutes
+                        if (parsedTime != null) {
+                            val cal = Calendar.getInstance()
+                            val originalCal = Calendar.getInstance().apply { timeInMillis = session.startTime }
+                            cal.time = parsedTime
+                            // Sadece saat ve dakikayı güncelle, tarih aynı kalsın
+                            originalCal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY))
+                            originalCal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE))
+                            
+                            onSave(originalCal.timeInMillis, duration)
+                        } else {
+                            onSave(session.startTime, duration)
+                        }
+                    } catch (e: Exception) {
+                        onSave(session.startTime, durationText.toIntOrNull() ?: session.durationMinutes)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Primary)
+            ) {
+                Text("Kaydet", color = Color.Black)
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+        }
     }
 }

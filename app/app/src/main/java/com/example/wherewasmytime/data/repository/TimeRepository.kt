@@ -37,8 +37,12 @@ class TimeRepository(
         categoryDao.updateCategory(category)
 
     /** Soft-delete: Kategoriyi arşivler, geçmiş kayıtları korur. */
-    suspend fun deleteCategory(id: Long) =
+    suspend fun archiveCategory(id: Long) =
         categoryDao.archiveCategory(id)
+
+    /** Hard-delete: Kategoriyi ve gerekirse altındaki verileri tamamen siler. */
+    suspend fun hardDeleteCategory(id: Long) =
+        categoryDao.hardDeleteCategory(id)
 
     // =====================
     // Oturum İşlemleri
@@ -86,6 +90,10 @@ class TimeRepository(
     /** Manuel giriş: Geçmiş bir oturumu doğrudan kaydeder. */
     suspend fun addManualSession(session: SessionEntity): Long =
         sessionDao.insertSession(session.copy(isManualEntry = true))
+
+    /** Undo veya tam oturum kaydetmek için kullanılır. */
+    suspend fun insertSession(session: SessionEntity): Long =
+        sessionDao.insertSession(session)
 
     suspend fun updateSession(session: SessionEntity) =
         sessionDao.updateSession(session)

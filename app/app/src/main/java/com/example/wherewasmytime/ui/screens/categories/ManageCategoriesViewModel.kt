@@ -86,7 +86,13 @@ class ManageCategoriesViewModel(application: Application) : AndroidViewModel(app
 
     fun archiveCategory(category: CategoryEntity) {
         viewModelScope.launch {
-            repository.deleteCategory(category.id)
+            repository.archiveCategory(category.id)
+        }
+    }
+
+    fun hardDeleteCategory(category: CategoryEntity) {
+        viewModelScope.launch {
+            repository.hardDeleteCategory(category.id)
         }
     }
 
