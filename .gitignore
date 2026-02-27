@@ -13,3 +13,9 @@
 local.properties
 .idea/
 *.log
+
+# Design / Temporary Markdown Files
+UI_/
+hata*.md
+feed-back*.md
+En son nerede kaldım.md

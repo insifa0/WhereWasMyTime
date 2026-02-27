@@ -1,1 +1,0 @@
-UI UX tasarımını ben vereceğim sana. Bana dizayn dökümantasyonunu verebilir misin? Projede neler nasıl yapılacak. Bunları ayrıntılı bir şekilde.
